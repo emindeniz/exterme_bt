@@ -1,6 +1,8 @@
 import backtrader as bt
 import pandas as pd
-def print_analysis(strategy,filename,writer=None,stop=True):
+from collections import OrderedDict
+
+def print_analysis(strategy,filename):
     """
     Function to print results of a single strategy from a run
     :param strategy:
@@ -10,43 +12,15 @@ def print_analysis(strategy,filename,writer=None,stop=True):
     :return:
     """
 
-    # Get the names of analyzers that are added to the run.
-    names = strategy.analyzers.getnames()
+    pd.DataFrame(flatten_analysis(strategy),index=[0]).\
+        to_csv(filename)
 
-    if writer is None:
-        writer = bt.WriterFile(out=filename, csv=True)
-
-    # First print parameters of the strategy:
-    writer.writedict(strategy.params.__dict__)
-    # Print each analysis one by one the file
-    for name in names:
-        analysis = strategy.analyzers.getbyname(name)
-        # from IPython import embed
-        # embed()
-        writer.writedict(analysis.get_analysis())
-
-    # Stop the writer
-    if stop:
-        writer.stop()
 
 def print_optimization(opt_res,filename):
-    """
-    Print results of an optimization run.
-    :param opt_res:
-    :param filename:
-    :return:
-    """
 
-    # Get the element 0 (there was only 1 strategy in each run) of each optimization
-    # In future there could be multiple
-    st0 = [s[0] for s in opt_res]
+    flatten_optimization(opt_res).to_csv(filename)
 
-    writer = bt.WriterFile(out=filename, csv=True)
 
-    # For each run print the analysis to the file.
-    for run in st0:
-        print_analysis(run, filename, writer=writer, stop=False)
-    writer.stop()
 
 def flatten_dict(odict,first_prefix=''):
     def helper(current_dict,prefix):
@@ -67,7 +41,7 @@ def flatten_analysis(strategy):
 
     analysis_dict = {}
     # First print parameters of the strategy:
-    analysis_dict.update({'value':strategy.thevalue})
+    # analysis_dict.update({'value':strategy.thevalue})
     analysis_dict.update(strategy.params.__dict__)
     # Flatten each analysis dict
     for name in names:
@@ -101,6 +75,28 @@ def flatten_optimization(opt_res):
             ignore_index=True)
 
     return optimization_res
+
+def flatten_multiple_stra(opt_res):
+    """
+    Print results of an optimization run.
+    :param opt_res:
+    :param filename:
+    :return:
+    """
+
+    # Get the element 0 (there was only 1 strategy in each run) of each optimization
+    # In future there could be multiple
+    # st0 = [s[0] for s in opt_res]
+
+    optimization_res = pd.DataFrame()
+    # For each run print the analysis to the file.
+    for run in opt_res:
+        current_strategy = flatten_analysis(run)
+        optimization_res = optimization_res.append(
+            pd.DataFrame(current_strategy,index=[0]),
+            ignore_index=True)
+
+    return optimization_res.reindex(sorted(optimization_res.columns), axis=1)
 
 
 

@@ -2,12 +2,16 @@ import backtrader as bt
 import os
 import pandas as pd
 from datetime import datetime
+
+period = 'M30'
+
 class CSV_Data():
 
     def __init__(self):
 
         modpath = os.path.dirname('C:\\TickDownloader\\tickdata\\')
-        datapath = os.path.join(modpath, 'EURUSD_M5_UTC-5_00_noweekends.csv')
+        datapath = os.path.join(modpath, 'EURUSD_{}_UTC-5_00_noweekends.csv'
+                                .format(period))
 
         # Create a Data Feed
         self.feed = bt.feeds.GenericCSVData(
@@ -31,7 +35,8 @@ class Pandas_Data():
     def __init__(self,holdout=False):
 
         modpath = os.path.dirname('C:\\TickDownloader\\tickdata\\')
-        datapath = os.path.join(modpath, 'EURUSD_M5_UTC-5_00_noweekends.csv')
+        datapath = os.path.join(modpath, 'EURUSD_{}_UTC-5_00_noweekends.csv'
+                                .format(period))
 
 
         dataframe = pd.read_csv(datapath,
@@ -51,19 +56,35 @@ class Pandas_Data():
     def get_feed(self,index=None):
 
         if index is None:
-            index = range(self.dataframe.shape[0])
-        # Create a Data Feed
-        feed = bt.feeds.PandasData(
-            dataname=self.dataframe.iloc[index],
-            open=1,
-            high=2,
-            low=3,
-            close=4,
-        volume=5)
+            feed = bt.feeds.PandasData(
+                dataname=self.dataframe,
+                open=1,
+                high=2,
+                low=3,
+                close=4,
+                volume=5)
+        else:
+            # Create a Data Feed
+            feed = bt.feeds.PandasData(
+                dataname=self.dataframe.iloc[index],
+                open=1,
+                high=2,
+                low=3,
+                close=4,
+            volume=5)
 
         feed.csv = False
 
         return feed
+
+    def get_start_date(self,index):
+
+        return self.dataframe.iloc[index].index[0]
+
+    def get_end_date(self, index):
+
+        return self.dataframe.iloc[index].index[-1]
+
 
 
 

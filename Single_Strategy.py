@@ -30,7 +30,7 @@ if __name__ == '__main__':
     cerebro.broker.set_slippage_perc(perc=0.0002)
 
     # Add a FixedSize sizer according to the stake
-    cerebro.addsizer(bt.sizers.FixedSize, stake=2000)
+    cerebro.addsizer(bt.sizers.FixedSize, stake=1000)
 
     data = Pandas_Data().get_feed()
     # Add the Data Feed to Cerebro
@@ -38,17 +38,13 @@ if __name__ == '__main__':
 
     cerebro.addanalyzer(btanalyzers.TradeAnalyzer,_name='trade_analysis')
     cerebro.addanalyzer(btanalyzers.DrawDown,_name='drawdown')
-    cerebro.addanalyzer(btanalyzers.PyFolio,_name='pyfolio')
-    cerebro.addanalyzer(trade_list,_name='trade_list')
-    cerebro.addobserver(btobservers.DrawDown,plot=True,subplot=True)
-
 
     # Add a strategy
     strats = cerebro.addstrategy(SMA_Crossover,printlog=True)
 
     logging.info('Starting Portfolio Value: %.2f' % cerebro.broker.getvalue())
 
-    res = cerebro.run(tradehistory=True)
+    res = cerebro.run()
 
     logging.info('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
 
@@ -56,4 +52,4 @@ if __name__ == '__main__':
     print_analysis(res[0],filename='result.csv')
 
     # Plot the result
-    cerebro.plot(numfigs=1)
+    #cerebro.plot(numfigs=1)

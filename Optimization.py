@@ -20,10 +20,15 @@ from Utils import print_optimization,flatten_optimization
 
 if __name__ == '__main__':
 
-    cerebro = bt.Cerebro(stdstats=True,optreturn=False)
+    short_param = np.arange(1,50,5)
+    long_param = np.arange(40,200,10)
+    trading_start = np.arange(0,24,1)
+    trading_length = np.arange(0,24,3)
+    trail_perc = np.arange(0.01,0.1,0.01)
 
+
+    cerebro = bt.Cerebro(stdstats=False,optreturn=True,optdatas=True)
     cerebro.broker.setcash(10000.0)
-    # Set the commission - 0.1% ... divide by 100 to remove the %
     cerebro.broker.setcommission(commission=0.0004)
     cerebro.broker.set_slippage_perc(perc=0.0002)
 
@@ -31,28 +36,20 @@ if __name__ == '__main__':
     cerebro.addsizer(bt.sizers.FixedSize, stake=1000)
 
     # Add the Data Feed to Cerebro
-    cerebro.adddata(CSV_Data().get_feed())
+    cerebro.adddata(Pandas_Data().get_feed())
 
     cerebro.addanalyzer(btanalyzers.TradeAnalyzer,_name='trades')
     cerebro.addanalyzer(btanalyzers.DrawDown,_name='drawdown')
-
-    short_param = np.arange(1,50,2)
-    long_param = np.arange(40,200,5)
-    trading_start = np.arange(0,24,1)
-    trading_length = np.arange(0,24,3)
-    trail_perc = np.arange(0.01,0.1,0.01)
-
 
     strats = cerebro.optstrategy(
         SMA_Crossover,
     short=short_param,
     long=long_param)
 
-
-
     start_time = time.time()
     res = cerebro.run()
-    print('It took',(time.time() - start_time)/3600)
+    print('It took', (time.time() - start_time) / 3600)
+
     optimization_df = flatten_optimization(res)
     optimization_df.to_csv('result.csv')
 
