@@ -1,14 +1,11 @@
-from TimeSeriesSplit import TimeSeriesSplitImproved
+from utils.timeSeriesSplit import TimeSeriesSplitImproved
 import numpy as np
-from IPython import embed
 import backtrader as bt
 import pandas as pd
 pd.set_option('display.max_columns', 100)
-from SMA_Crossover import SMA_Crossover
-from copy import deepcopy
-import json
-from Utils import flatten_multiple_stra
-from Data import Pandas_Data
+from strategies.SMA_Crossover import SMA_Crossover
+from utils.utils import flatten_multiple_stra
+from utils.data import Pandas_Data
 
 if __name__ == '__main__':
 

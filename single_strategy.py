@@ -1,23 +1,14 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import os.path  # To manage paths
-import json
 import logging
-from SMA_Crossover import SMA_Crossover
-from CCI import CCI
-from RSI import RSI
-from Utils import print_analysis
+from strategies.SMA_Crossover import SMA_Crossover
+from utils.utils import print_analysis
 logging.basicConfig(level=logging.DEBUG)
 
 import backtrader as bt
 import backtrader.analyzers as btanalyzers
-from Custom_Analyzers import trade_list
-import backtrader.observers as btobservers
-from tabulate import tabulate
-from Data import Pandas_Data
-import pandas as pd
-from Utils import flatten_dict
+from utils.data import Pandas_Data
 
 if __name__ == '__main__':
 

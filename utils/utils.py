@@ -54,7 +54,7 @@ def flatten_analysis(strategy):
 
 
 
-def flatten_optimization(opt_res):
+def flatten_optimization(opt_res,sort_by = 'trades_pnl_gross_total'):
     """
     Print results of an optimization run.
     :param opt_res:
@@ -74,7 +74,7 @@ def flatten_optimization(opt_res):
             pd.DataFrame(current_strategy,index=[0]),
             ignore_index=True)
 
-    return optimization_res
+    return optimization_res.sort_values(sort_by,ascending=False)
 
 def flatten_multiple_stra(opt_res):
     """

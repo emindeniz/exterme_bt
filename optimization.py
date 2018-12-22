@@ -1,22 +1,18 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import datetime  # For datetime objects
-import os.path  # To manage paths
 import time
 import logging
 import numpy as np
-from SMA_Crossover import SMA_Crossover
+from strategies.SMA_Crossover import SMA_Crossover
 logging.basicConfig(level=logging.DEBUG)
 
 import backtrader as bt
 import backtrader.analyzers as btanalyzers
 import pandas as pd
 pd.set_option('display.max_columns', 100)
-from Plots import countour_plot,heatmap
-from Data import Pandas_Data, CSV_Data
-from Custom_Analyzers import trade_list
-from Utils import print_optimization,flatten_optimization
+from utils.data import Pandas_Data
+from utils.utils import flatten_optimization
 
 if __name__ == '__main__':
 
@@ -44,7 +40,9 @@ if __name__ == '__main__':
     strats = cerebro.optstrategy(
         SMA_Crossover,
     short=short_param,
-    long=long_param)
+    long=long_param,
+    trading_start=trading_start,
+    filter_off=False)
 
     start_time = time.time()
     res = cerebro.run()
@@ -54,5 +52,4 @@ if __name__ == '__main__':
     optimization_df.to_csv('result.csv')
 
     print(optimization_df[['short','long','trades_pnl_net_total','drawdown_max_drawdown']])
-    countour_plot(optimization_df,X='short',Y='long',Z='trades_pnl_net_total')
-    heatmap(optimization_df,X='short',Y='long',Z='trades_pnl_net_total')
+

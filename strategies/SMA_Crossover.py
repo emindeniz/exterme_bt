@@ -11,7 +11,7 @@ class SMA_Crossover(bt.Strategy):
         ('long',40),
         ('printlog', False),
         ('trading_start',9),
-        ('trading_length',3),
+        ('trading_length',6),
         ('filter_off',True),
         ('stop_loss', 0.03),
         ('stop_loss_on',False),
@@ -37,8 +37,9 @@ class SMA_Crossover(bt.Strategy):
 
         # Trading filter to limit times of the day to trade
         trading_hour = self.datas[0].datetime.time(0).hour
+
         trading_filter = self.params.filter_off or ((trading_hour>=self.params.trading_start)&
-        (trading_hour<=self.params.trading_start+self.params.trading_length))
+        (trading_hour<=(self.params.trading_start+self.params.trading_length)//24))
 
         walk_forward_filter = ((self.datas[0].datetime.date() > self.params.start_date.date()) &
                                (self.datas[0].datetime.date() < self.params.end_date.date()))
@@ -131,3 +132,4 @@ class SMA_Crossover(bt.Strategy):
         if self.params.printlog or doprint:
             dt = dt or self.datas[0].datetime.date(0)
             print('%s, %s' % (dt.isoformat(), txt))
+

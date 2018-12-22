@@ -4,7 +4,6 @@ from __future__ import (absolute_import, division, print_function,
 import datetime  # For datetime objects
 import os.path  # To manage paths
 import sys  # To find out the script name (in argv[0])
-from TickDownloader_CSV import TickDownloaderCSV
 import backtrader.analyzers as btanalyzers
 import json
 import logging
