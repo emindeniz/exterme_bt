@@ -30,7 +30,7 @@ def flatten_dict(odict,first_prefix=''):
             else:
                 result[prefix+'_'+key]=value
 
-    result = {}
+    result = OrderedDict()
     helper(odict,first_prefix)
     return result
 
@@ -39,9 +39,9 @@ def flatten_analysis(strategy):
     # Get the names of analyzers that are added to the run.
     names = strategy.analyzers.getnames()
 
-    analysis_dict = {}
-    # First print parameters of the strategy:
-    # analysis_dict.update({'value':strategy.thevalue})
+    analysis_dict = OrderedDict()
+
+    # First add the strategy parameters
     analysis_dict.update(strategy.params.__dict__)
     # Flatten each analysis dict
     for name in names:
@@ -96,7 +96,7 @@ def flatten_multiple_stra(opt_res):
             pd.DataFrame(current_strategy,index=[0]),
             ignore_index=True)
 
-    return optimization_res.reindex(sorted(optimization_res.columns), axis=1)
+    return optimization_res
 
 
 

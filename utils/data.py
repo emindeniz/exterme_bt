@@ -3,15 +3,16 @@ import os
 import pandas as pd
 from datetime import datetime
 
-period = 'M30'
+period = 'D1'
 
 class CSV_Data():
 
-    def __init__(self):
+    def __init__(self,datapath=None):
 
-        modpath = os.path.dirname('C:\\TickDownloader\\tickdata\\')
-        datapath = os.path.join(modpath, 'EURUSD_{}_UTC-5_00_noweekends.csv'
-                                .format(period))
+        if datapath is None:
+            modpath = os.path.dirname('C:\\TickDownloader\\tickdata\\')
+            datapath = os.path.join(modpath, 'EURUSD_{}_UTC-5_00.csv'
+                                    .format(period))
 
         # Create a Data Feed
         self.feed = bt.feeds.GenericCSVData(
@@ -32,11 +33,12 @@ class CSV_Data():
 
 class Pandas_Data():
 
-    def __init__(self,holdout=False):
+    def __init__(self,holdout=False,datapath=None):
 
-        modpath = os.path.dirname('C:\\TickDownloader\\tickdata\\')
-        datapath = os.path.join(modpath, 'EURUSD_{}_UTC-5_00_noweekends.csv'
-                                .format(period))
+        if datapath is None:
+            modpath = os.path.dirname('C:\\TickDownloader\\tickdata\\')
+            datapath = os.path.join(modpath, 'EURUSD_{}_UTC-5_00.csv'
+                                    .format(period))
 
 
         dataframe = pd.read_csv(datapath,

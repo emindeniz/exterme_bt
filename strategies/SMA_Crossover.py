@@ -17,8 +17,10 @@ class SMA_Crossover(bt.Strategy):
         ('stop_loss_on',False),
         ('trail_perc',0.05),
         ('trail_perc_on',False),
+        # TODO change this parameter name to wf_start
         ('start_date',datetime(1900,1,1)),
-        ('end_date',datetime(2100,1,1))
+        ('end_date',datetime(2100,1,1)),
+        ('end_value',0)
     )
 
     def __init__(self):
@@ -123,7 +125,7 @@ class SMA_Crossover(bt.Strategy):
                  (trade.pnl, trade.pnlcomm))
 
     def stop(self):
-        self.thevalue = self.broker.get_value()
+        self.params.end_value = self.broker.get_value()
         self.log('Ending Value %.4f' %
                  self.broker.getvalue(), doprint=True)
 
