@@ -45,10 +45,11 @@ def flatten_analysis(strategy):
     analysis_dict.update(strategy.params.__dict__)
     # Flatten each analysis dict
     for name in names:
-        analysis = strategy.analyzers.getbyname(name)
-        analysis_dict.update(
-            flatten_dict(
-                analysis.get_analysis(),first_prefix=name))
+        if name!='trade_list':
+            analysis = strategy.analyzers.getbyname(name)
+            analysis_dict.update(
+                flatten_dict(
+                    analysis.get_analysis(),first_prefix=name))
 
     return analysis_dict
 
@@ -76,7 +77,7 @@ def flatten_optimization(opt_res,sort_by = 'trades_pnl_gross_total'):
 
     return optimization_res.sort_values(sort_by,ascending=False)
 
-def flatten_multiple_stra(opt_res):
+def flatten_wf_multiple_stra(opt_res):
     """
     Print results of an optimization run.
     :param opt_res:
@@ -97,6 +98,17 @@ def flatten_multiple_stra(opt_res):
             ignore_index=True)
 
     return optimization_res
+
+def flatten_wf_trade_list(opt_res):
+
+    trade_list = pd.DataFrame()
+    # For each run print the analysis to the file.
+    for run in opt_res:
+        trade_list = trade_list.append(
+            run.analyzers.getbyname('trade_list').get_analysis(),
+            ignore_index=True)
+
+    return trade_list
 
 
 

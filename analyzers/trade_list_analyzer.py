@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 import sys
 
-class trade_list(bt.Analyzer):
+class trade_list_analyzer(bt.Analyzer):
 
     def get_analysis(self):
 
