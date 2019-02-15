@@ -89,18 +89,18 @@ class TimeSeriesSplitImproved(TimeSeriesSplit):
         """
         X, y, groups = indexable(X, y, groups)
         n_samples = _num_samples(X)
-        n_splits = self.n_splits
-        n_folds = n_splits + 1
+        n_folds = self.n_splits
+        # n_folds = n_splits + 1
         train_splits, test_splits = int(train_splits), int(test_splits)
         if n_folds > n_samples:
             raise ValueError(
                 ("Cannot have number of folds ={0} greater"
                  " than the number of samples: {1}.").format(n_folds,
                                                              n_samples))
-        if ((n_folds - train_splits - test_splits)<=0 and test_splits > 0):
-            raise ValueError(
-                ("Both train_splits and test_splits must be positive"
-                 " integers."))
+        # if ((n_folds - train_splits - test_splits)<=0 and test_splits > 0):
+        #     raise ValueError(
+        #         ("Both train_splits and test_splits must be positive"
+        #          " integers."))
         indices = np.arange(n_samples)
         split_size = (n_samples // n_folds)
         test_size = split_size * test_splits

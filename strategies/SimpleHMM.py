@@ -4,11 +4,20 @@ import logging
 logging.basicConfig(level=logging.INFO)
 import backtrader as bt
 from datetime import datetime
+import numpy as np
 
-class SMA_Crossover(bt.Strategy):
+class SimpleHMM(bt.Strategy):
     params = (
-        ('short', 1),
-        ('long',40),
+        ('name','SimpleHMM'),
+        ('no_no', 0.5),
+        ('no_long', 0.5),
+        ('long_no',0.5),
+        ('long_long', 0.5),
+        ('no_short', 0.5),
+        ('short_no', 0.5),
+        ('short_short', 0.5),
+        ('short_long', 0.5),
+        ('long_short', 0.5),
         ('printlog', False),
         ('trading_start',9),
         ('trading_length',6),
@@ -26,12 +35,8 @@ class SMA_Crossover(bt.Strategy):
     def __init__(self):
         # Keep a reference to the "close" line in the data[0] dataseries
         self.dataclose = self.datas[0].close
+        self.state = 'no'
 
-        # Add a MovingAverageSimple indicator
-        self.short_sma = bt.indicators.SimpleMovingAverage(
-            self.datas[0].close, period=self.params.short)
-        self.long_sma = bt.indicators.SimpleMovingAverage(
-            self.datas[0].close, period=self.params.long)
 
     def next(self):
         # Simply log the closing price of the series from the reference
@@ -49,9 +54,21 @@ class SMA_Crossover(bt.Strategy):
         wf_just_finished = ((self.datas[0].datetime.date() > self.params.end_date.date()) &
                                (self.datas[0].datetime.date(-1) <= self.params.end_date.date()))
 
+        if self.state=='no':
+            p= [self.params.no_long,self.params.no_no,self.params.no_short]
+            p = np.array(p)/np.sum(p)
+            action=np.random.choice(['long','none','short'],p=p)
+        elif self.state=='long':
+            p = [self.params.long_long, self.params.long_no, self.params.long_short]
+            p = np.array(p) / np.sum(p)
+            action = np.random.choice(['none', 'no', 'short'])
+        elif self.state=='short':
+            p = [self.params.short_long, self.params.short_no, self.params.short_short]
+            p = np.array(p) / np.sum(p)
+            action = np.random.choice(['long', 'no', 'none'])
+
         # GO LONG if ...
-        if self.short_sma[0] > self.long_sma[0] and \
-                self.short_sma[-1]<=self.long_sma[-1] and \
+        if action=='long' and \
             trading_filter and walk_forward_filter:
             # BUY, BUY, BUY!!! (with all possible default parameters)
             for order in list(self.broker.pending):
@@ -71,9 +88,10 @@ class SMA_Crossover(bt.Strategy):
             self.log('Order submitted by {} {}'.format(self.params.start_date,
                                                        self.params.end_date))
 
+            self.state = 'long'
+
         # GO SHORT IF:
-        if self.short_sma[0] < self.long_sma[0] and \
-                self.short_sma[-1] >= self.long_sma[-1] and \
+        elif action=='sell' and \
                 trading_filter and walk_forward_filter:
 
             # SELL, SELL, SELL!!! (with all possible default parameters)
@@ -87,8 +105,23 @@ class SMA_Crossover(bt.Strategy):
                 self.buy(exectype=bt.Order.StopTrail,
                          trailpercent=self.params.trail_perc)
             elif self.params.stop_loss_on:
-                self.buy(exectype=bt.Order.StopTrail,
+                self.buy(exectype=bt.Order.StopLimit,
                          price=self.dataclose[0]*(1+self.params.stop_loss))
+
+            self.state='short'
+
+        # GO SHORT IF:
+        elif action=='no' and \
+                trading_filter and walk_forward_filter:
+
+            # SELL, SELL, SELL!!! (with all possible default parameters)
+            for order in list(self.broker.pending):
+                self.cancel(order)
+            if self.position:
+                self.close()
+
+            self.state='no'
+
 
         # If we are walking forward we have to close once the period is over
         if wf_just_finished:

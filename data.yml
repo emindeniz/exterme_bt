@@ -1,0 +1,83 @@
+broker_input:
+  cash: 20000
+  commvalue: 5
+  opreturn: false
+  percents: 30
+  slippage_perc: 0.001
+  stdstats: false
+datapath: C:\ProgramData\Kibot Agent\Data\30m\
+end_date: 2017/01/01
+extension: txt
+n_splits: 2
+optimization_input:
+  after_period: 1
+  before_period: 2
+  filter_off: false
+  perc_change: !!python/object/apply:numpy.core.multiarray._reconstruct
+    args:
+    - &id001 !!python/name:numpy.ndarray ''
+    - !!python/tuple
+      - 0
+    - !!binary |
+      Yg==
+    state: !!python/tuple
+    - 1
+    - !!python/tuple
+      - 9
+    - &id002 !!python/object/apply:numpy.dtype
+      args:
+      - f8
+      - 0
+      - 1
+      state: !!python/tuple
+      - 3
+      - <
+      - null
+      - null
+      - null
+      - -1
+      - -1
+      - 0
+    - false
+    - !!binary |
+      exSuR+F6hD97FK5H4XqUP7gehetRuJ4/exSuR+F6pD+amZmZmZmpP7kehetRuK4/61G4HoXrsT97
+      FK5H4Xq0PwrXo3A9Crc/
+  printlog: false
+  stop_loss: !!python/object/apply:numpy.core.multiarray._reconstruct
+    args:
+    - *id001
+    - !!python/tuple
+      - 0
+    - !!binary |
+      Yg==
+    state: !!python/tuple
+    - 1
+    - !!python/tuple
+      - 5
+    - *id002
+    - false
+    - !!binary |
+      exSuR+F6hD97FK5H4XqUP7gehetRuJ4/exSuR+F6pD+amZmZmZmpPw==
+  stop_loss_on: true
+  trading_length: 8
+  trading_start: !!python/object/apply:numpy.core.multiarray._reconstruct
+    args:
+    - *id001
+    - !!python/tuple
+      - 0
+    - !!binary |
+      Yg==
+    state: !!python/tuple
+    - 1
+    - !!python/tuple
+      - 6
+    - *id002
+    - false
+    - !!binary |
+      AAAAAAAAIkAAAAAAAAAjQAAAAAAAACRAAAAAAAAAJUAAAAAAAAAmQAAAAAAAACdA
+outputpath: results\
+start_date: 2006/01/01
+tickers:
+- - EBAY
+- - AAPL
+- - JNJ

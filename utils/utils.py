@@ -15,12 +15,9 @@ def print_analysis(strategy,filename):
     pd.DataFrame(flatten_analysis(strategy),index=[0]).\
         to_csv(filename)
 
-
 def print_optimization(opt_res,filename):
 
     flatten_optimization(opt_res).to_csv(filename)
-
-
 
 def flatten_dict(odict,first_prefix=''):
     def helper(current_dict,prefix):
@@ -43,6 +40,7 @@ def flatten_analysis(strategy):
 
     # First add the strategy parameters
     analysis_dict.update(strategy.params.__dict__)
+    analysis_dict.update({'ticker':strategy.data._name})
     # Flatten each analysis dict
     for name in names:
         if name!='trade_list':

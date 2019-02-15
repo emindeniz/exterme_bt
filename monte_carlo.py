@@ -3,6 +3,7 @@ import numpy as np
 from datetime import timedelta
 from functools import wraps
 from time import time
+from utils.plots import plot_mfe,plot_mae
 
 pd.set_option('display.max_columns', 100)
 """
@@ -179,17 +180,19 @@ if __name__ == '__main__':
     # are due to single contract
     df_trade_history = pd.read_csv('trades.csv')
 
-    monte_carlo_ff_sizing(df_trade_history, equity=10000,
-                       margin_req=0.05, iterations=100,
-                       contract_value=1000,start_sizing=1,
-                       end_sizing=5, increment = 1,
-                          max_drawdown=300)
+    # monte_carlo_ff_sizing(df_trade_history, equity=10000,
+    #                    margin_req=0.05, iterations=100,
+    #                    contract_value=1000,start_sizing=1,
+    #                    end_sizing=5, increment = 1,
+    #                       max_drawdown=300)
+    #
+    # monte_carlo_mdd_sizing(df_trade_history, equity=10000,
+    #                    margin_req=0.05, iterations=100,
+    #                    contract_value=1000,max_drawdown=300)
+    #
+    # monte_carlo_equity(df_trade_history, starting_equity=10000,
+    #                    margin_req=0.05, iterations=100,
+    #                    contract_size=50, contract_value=1000,
+    #                    ending_equity=20000, increment=1000)
 
-    monte_carlo_mdd_sizing(df_trade_history, equity=10000,
-                       margin_req=0.05, iterations=100,
-                       contract_value=1000,max_drawdown=300)
-
-    monte_carlo_equity(df_trade_history, starting_equity=10000,
-                       margin_req=0.05, iterations=100,
-                       contract_size=50, contract_value=1000,
-                       ending_equity=20000, increment=1000)
+    plot_mfe(df_trade_history)

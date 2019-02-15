@@ -1,6 +1,3 @@
-
-from bokeh.io import show
-from bokeh.layouts import column
 from bokeh.models import ColumnDataSource, RangeTool
 from bokeh.plotting import figure, output_file
 from bokeh.io import output_notebook
@@ -10,6 +7,44 @@ import numpy as np
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
 from matplotlib.dates import num2date
 import seaborn as sns
+from bokeh.resources import CDN
+from bokeh.embed import file_html
+
+def plot_bokeh_scatter(data,x_col,y_col,colors,name,notebook=False):
+
+
+    TOOLS = "hover,crosshair,pan,wheel_zoom,zoom_in,zoom_out," \
+            "box_zoom,undo,redo,reset,tap,save,box_select,poly_select,lasso_select,"
+
+    p = figure(tools=TOOLS,plot_height=400, plot_width=400,)
+
+    p.scatter(data[x_col], data[y_col],
+              fill_color=colors, fill_alpha=0.6,
+              line_color=None)
+    p.xaxis.axis_label = x_col
+    p.yaxis.axis_label = y_col
+
+    if notebook:
+        output_notebook()
+
+    return file_html(p, CDN, "my plot")
+
+
+def plot_mae(trade_list,notebook=False):
+
+    colors = ['green' if pnl > 0 else 'red' for pnl in trade_list['pnl'].tolist()]
+
+    return plot_bokeh_scatter(data = trade_list, x_col='mae%',
+                       y_col='pnl%',colors = colors,name='mae',
+                       notebook=notebook)
+
+def plot_mfe(trade_list,notebook=False):
+
+    colors = ['green' if pnl > 0 else 'red' for pnl in trade_list['pnl'].tolist()]
+
+    return plot_bokeh_scatter(data = trade_list, x_col='mfe%',
+                       y_col='pnl%',colors = colors,name='mfe',
+                       notebook=notebook)
 
 
 def plot_observer(strategy,alias='value',notebook=False):
@@ -22,17 +57,17 @@ def plot_observer(strategy,alias='value',notebook=False):
     :return:
     """
     for observer in strategy.getobservers():
-        linealias = observer.lines._getlinealias(0)
+        linealias = observer.lines._getlinealias(1)
         if linealias ==alias:
             dates = np.array(strategy.datetime.plot())
-            ydata = np.array(observer.lines[0].plot())
+            ydata = np.array(observer.lines[1].plot())
             dates = num2date(dates)
-            plot_bokeh_dates_vs_values(dates=dates,
+            html_fig = plot_bokeh_dates_vs_values(dates=dates,
                                        values=ydata,
                                        notebook=notebook,
                                        alias=alias)
 
-    return
+    return html_fig
 
 def plot_bokeh_dates_vs_values(dates, values, notebook=False,
                                alias='value'):
@@ -70,11 +105,8 @@ def plot_bokeh_dates_vs_values(dates, values, notebook=False,
 
     if notebook:
         output_notebook()
-    else:
-        output_file("{}.html".format(alias),
-                    title="{} observer".format(alias))
 
-    show(column(p, select))
+    return file_html(p, CDN, "my plot")
 
 
 def countour_plot(df, X=None,Y=None,Z=None):

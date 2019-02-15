@@ -61,7 +61,7 @@ class trade_list_analyzer(bt.Analyzer):
                 mfe = -lp
                 mae = -hp
 
-            self.trades.append({'ref': trade.ref, 'ticker': trade.data._name[:5],
+            self.trades.append({'ref': trade.ref, 'ticker': trade.data._name.split('\\')[-1],
                                 'dir': dir,'datein': datein,
                                 'pricein': pricein, 'dateout': dateout,
                                 'priceout': priceout,'chng%': round(pcntchange, 2),
